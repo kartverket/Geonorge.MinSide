@@ -11,31 +11,69 @@
     @{
         ViewData["Title"] = "Oppfølgingspunkter";
     }
-    <div class="container">
-        <h2>Oppfølgingspunkter</h2>
-        @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+<div class="container">
+    <h2>Oppfølgingspunkter</h2>
+    @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+    {
+        <p>
+            <a href="/ToDo/Create?meetingId=@Context.Request.Query["meetingId"]">Opprett nytt</a>
+        </p>
+    }
+    @if (Context.Request.Query["listView"].ToString() == "true")
+    {
+        <div align="right"><a href="?initial=true">Standard-visning</a></div>
+    }
+    else
+    {
+        <div align="right"><a href="?initial=true&listView=true">Vis som liste</a></div>
+    }
+    @if (Context.Request.Query["meetingId"].ToString() != "")
+    {
+        <p>
+            <a href="/Meetings/Edit/@Context.Request.Query["meetingId"]">Tilbake møte</a>
+        </p>
+    }
+    <form asp-action="Index" method="get">
+        @{var Status = new MultiSelectList(CodeList.ToDoStatus, "Key", "Value", ViewBag.Status); }
+        <span>Status: </span>
+        @foreach (var status in Status)
         {
-            <p>
-                <a href="/ToDo/Create?meetingId=@Context.Request.Query["meetingId"]">Opprett nytt</a>
-            </p>
+            <span>
+                <input onchange="this.form.submit()" id="@Helper.GetMeetingStatusClass(status.Value)" type="checkbox" name="status" value="@status.Value" @(status.Selected ? "checked" : "") />
+                <label for="@Helper.GetMeetingStatusClass(status.Value)">@status.Value</label>
+            </span>
         }
-        @if (Context.Request.Query["meetingId"].ToString() != "")
-        {
-            <p>
-                <a href="/Meetings/Edit/@Context.Request.Query["meetingId"]">Tilbake møte</a>
-            </p>
-        }
-        <form asp-action="Index" method="get">
-            @{var Status = new MultiSelectList(CodeList.ToDoStatus, "Key", "Value", ViewBag.Status); }
-            <span>Status: </span>
-            @foreach (var status in Status)
-            {
-                <span>
-                    <input onchange="this.form.submit()" id="@Helper.GetMeetingStatusClass(status.Value)" type="checkbox" name="status" value="@status.Value" @(status.Selected ? "checked" : "") />
-                    <label for="@Helper.GetMeetingStatusClass(status.Value)">@status.Value</label>
-                </span>
-            }
-        </form>
+    </form>
+    @if (Context.Request.Query["listView"].ToString() == "true")
+    {
+        <div class="list">
+            <div class="list-header d-none d-md-block">
+                <div class="row">
+                    <div class="col-md-3">NAVN</div>
+                    <div class="col-md-3">ANSVARLIG</div>
+                    <div class="col-md-2">Frist</div>
+                    <div class="col-md-2">Status</div>
+                    <div class="col-md-2">Utført dato</div>
+                </div>
+            </div>
+            <div class="list-content">
+                @foreach (var todo in Model)
+                {
+                    <div class="list-item">
+                        <div class="row">
+                            <div class="col-md-3">@todo.Subject</div>
+                            <div class="col-md-3">@todo.ResponsibleOrganization</div>
+                            <div class="col-md-2">@todo.Deadline.ToString("dd.MM.yyyy")</div>
+                            <div class="col-md-2">@todo.Status</div>
+                            <div class="col-md-2">@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")</div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
         <div class="row">
             <div class="col-12">
                 <form asp-action="EditToDoList">
@@ -143,4 +181,5 @@
                 </script>
             </div>
         </div>
-    </div>
+    }
+</div>
