@@ -1,0 +1,80 @@
+﻿<script type="text/x-template" id="tiltaksplan-template">
+    <div v-if="items && visibleItems.length">
+        <div class="list">
+            <h3 class="section-title">Tiltaksplan</h3>
+            <div class="list-content">
+                <div v-for="item in visibleItems" class="list-item">
+                    <div class="row">
+                        <div class="col-md-2">
+                            {{item.no}}
+                        </div>
+                        <div class="col-md-10">
+                            <a v-bind:href="getDetailsUrl(item.no)" target="_blank">{{ item.name }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script>
+    var Tiltaksplan = {
+        name: "Tiltaksplan",
+        template: "#tiltaksplan-template",
+        data: function () {
+            return {
+                items: null,
+                filteredItems: [],
+                visibleItems: [],
+                tooManyHits: false,
+                reportUrl: "https://tiltaksplan." + this.$root.Environment + "geonorge.no/api/Measure?organization=" + this.$root.OrganizationName,
+                filterProperties: [
+                    'Label',
+                ]
+            }
+        },
+        methods: {
+
+            getDetailsUrl: function (no) {
+                
+                var url = "https://tiltaksplan." + this.$root.Environment + "geonorge.no/tiltak/" + no;
+
+                return url;
+            },
+
+            getItems: function () {
+                var organizationNameParameter = '?organization=' + this.$root.OrganizationName;
+                var environmentParameter = this.$root.Environment;
+                var apiURL = "https://tiltaksplan." + environmentParameter + "geonorge.no/api/Measure" + organizationNameParameter;
+
+                return Promise.resolve(this.$root.getApiData(apiURL))
+                    .then((apiData) => {
+                        this.items = apiData;
+                    });
+            },
+
+            filterItems: function (searchText) {
+                this.filteredItems = this.items.filter(item => {
+                    return this.filterProperties.some(filterProperty => {
+                        return item[filterProperty].toUpperCase().indexOf(searchText.toUpperCase()) > -1;
+                    });
+                });
+            }
+        },
+        mounted: function () {
+            this.getItems()
+                .then(() => {
+                    this.filteredItems = this.items;
+                    this.visibleItems = this.filteredItems;
+                });
+        },
+        watch: {
+            '$root.searchText': function () {
+                var searchText = this.$root.searchText.trim();
+                this.filterItems(searchText);
+                this.visibleItems = this.filteredItems;
+            }
+        }
+    };
+</script>
