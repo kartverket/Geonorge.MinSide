@@ -5,10 +5,10 @@
             <div class="list-content">
                 <div v-for="item in visibleItems" class="list-item">
                     <div class="row">
-                        <div class="col-md-2">
+                        <div class="col-md-1">
                             {{item.no}}
                         </div>
-                        <div class="col-md-10">
+                        <div class="col-md-11">
                             <a v-bind:href="getDetailsUrl(item.no)" target="_blank">{{ item.name }}</a>
                         </div>
                     </div>
