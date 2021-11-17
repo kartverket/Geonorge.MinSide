@@ -27,7 +27,7 @@
                             <a v-bind:href="getDetailsUrl(item.no)" target="_blank">{{ item.name }}</a>
                         </div>
                         <div class="col-md-2">
-                            {{getDate(item.lastUpdated)}}
+                            {{getDate(item.lastUpdatedActivity)}}
                         </div>
                         <div class="col-md-1 right">
                             <a v-if="item.infoUrl !== null" v-bind:href="item.infoUrl" target="_blank"><span style="background-repeat: no-repeat; float:right; width: 25px; height: 25px; background-image: url('/images/info.svg'); ">&nbsp;</span></a>
@@ -64,10 +64,11 @@
             },
 
             getDate: function (date) {
-                console.log(date);
+                if (date !== null) {
                 const dateArray = date.split("-");
                 const day = dateArray[2].substring(0, 4).split("T");
-                return day[0] + "." + dateArray[1] + "." + dateArray[0];
+                    return day[0] + "." + dateArray[1] + "." + dateArray[0];
+                }
             },
 
             getItems: function () {
