@@ -24,13 +24,16 @@
                             {{item.no}}
                         </div>
                         <div class="col-md-8">
-                            <a v-bind:href="getDetailsUrl(item.no)" target="_blank">{{ item.name }}</a>
+                            <a v-if="item.infoUrl !== null" v-bind:href="item.infoUrl" target="_blank">{{ item.name }}</a>
+                            <span v-if="item.infoUrl == null">{{ item.name }}</span>
                         </div>
                         <div class="col-md-2">
                             {{getDate(item.lastUpdatedActivity)}}
                         </div>
                         <div class="col-md-1 right">
-                            <a v-if="item.infoUrl !== null" v-bind:href="item.infoUrl" target="_blank"><span style="background-repeat: no-repeat; float:right; width: 25px; height: 25px; background-image: url('/images/info.svg'); ">&nbsp;</span></a>
+                            <a v-bind:href="getDetailsUrl(item.no)" target="_blank" class="d-none d-md-block fa fa-edit icon-button float-right"></a>
+                            <a v-bind:href="getDetailsUrl(item.no)" target="_blank" class="d-block d-md-none btn float-right">Rediger <span class="fa fa-edit"></span></a>
+
                         </div>
                     </div>
                 </div>
