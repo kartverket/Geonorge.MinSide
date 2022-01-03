@@ -19,31 +19,32 @@
             <a href="/ToDo/Create?meetingId=@Context.Request.Query["meetingId"]">Opprett nytt</a>
         </p>
     }
-    @if (Context.Request.Query["listView"].ToString() == "true")
-    {
-        <div align="right"><a href="?initial=true">Standard-visning</a></div>
-    }
-    else
-    {
-        <div align="right"><a href="?initial=true&listView=true">Vis som liste</a></div>
-    }
     @if (Context.Request.Query["meetingId"].ToString() != "")
     {
         <p>
             <a href="/Meetings/Edit/@Context.Request.Query["meetingId"]">Tilbake møte</a>
         </p>
     }
-    <form asp-action="Index" method="get">
-        @{var Status = new MultiSelectList(CodeList.ToDoStatus, "Key", "Value", ViewBag.Status); }
-        <span>Status: </span>
-        @foreach (var status in Status)
-        {
-            <span>
-                <input onchange="this.form.submit()" id="@Helper.GetMeetingStatusClass(status.Value)" type="checkbox" name="status" value="@status.Value" @(status.Selected ? "checked" : "") />
-                <label for="@Helper.GetMeetingStatusClass(status.Value)">@status.Value</label>
-            </span>
-        }
-    </form>
+<form asp-action="Index" id="filterForm" method="get">
+    <input type="hidden" name="listView" id="listView" value="@Context.Request.Query["listView"].ToString()" />
+    @if (Context.Request.Query["listView"].ToString() == "true")
+    {
+        <div align="right"><a onclick="document.getElementById('listView').value = 'false'; document.getElementById('filterForm').submit();">Standard-visning</a></div>
+    }
+    else
+    {
+        <div align="right"><a onclick="document.getElementById('listView').value = 'true'; document.getElementById('filterForm').submit();">Vis som liste</a></div>
+    }
+    @{var Status = new MultiSelectList(CodeList.ToDoStatus, "Key", "Value", ViewBag.Status); }
+    <span>Status: </span>
+    @foreach (var status in Status)
+    {
+        <span>
+            <input onchange="this.form.submit()" id="@Helper.GetMeetingStatusClass(status.Value)" type="checkbox" name="status" value="@status.Value" @(status.Selected ? "checked" : "") />
+            <label for="@Helper.GetMeetingStatusClass(status.Value)">@status.Value</label>
+        </span>
+    }
+</form>
     @if (Context.Request.Query["listView"].ToString() == "true")
     {
         <div class="list">
@@ -61,7 +62,7 @@
                 {
                     <div class="list-item">
                         <div class="row">
-                            <div class="col-md-3">@todo.Subject</div>
+                            <div class="col-md-3"><a href="/ToDo/Edit?id=@todo.Id&meetingId=@Context.Request.Query["meetingId"]">@todo.Subject</a></div>
                             <div class="col-md-3">@todo.ResponsibleOrganization</div>
                             <div class="col-md-2">@todo.Deadline.ToString("dd.MM.yyyy")</div>
                             <div class="col-md-2">@todo.Status</div>
@@ -149,7 +150,7 @@
                                 ].join('\n');
                                 const editor@(i) = new toastui.Editor({
                                     el: document.querySelector('#editor@(i)'),
-                                    height: '150px',
+                                    height: 'auto',
                                     events: { "change": onEditorUpdate@(i) },
                                     initialValue: content@(i),
                                     initialEditType: 'wysiwyg'

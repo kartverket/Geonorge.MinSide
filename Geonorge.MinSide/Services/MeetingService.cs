@@ -278,7 +278,7 @@ namespace Geonorge.MinSide.Services
             if (todo.Status != todoOld.Status)
                 changes.Append("Status: " + todo.Status + "<br>");
 
-            if (todo.Comment != todoOld.Comment)
+            if (! string.IsNullOrEmpty(todo.Comment) && todo.Comment != todoOld.Comment)
                 changes.Append("Kommentar: " + Markdown.ToHtml(todo.Comment) + "<br>");
 
             if (todo.Done.HasValue && todo.Done != todoOld.Done)
