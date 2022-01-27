@@ -172,14 +172,6 @@
 
                         function toggleAppearance(id) {
 
-                            for (j = 0; j < @(Model.Count()); j++)
-                            {
-                                var dataDiv = document.getElementById("todoItem" + j);
-                                dataDiv.style.visibility = "hidden";
-                                dataDiv.style.display = "none";
-
-                            }
-
                             var dataDiv = document.getElementById("todoItem" + id);
                             if (dataDiv.style.visibility == "hidden") {
                                 dataDiv.style.visibility = "visible";
@@ -188,6 +180,16 @@
                             else {
                                 dataDiv.style.visibility = "hidden";
                                 dataDiv.style.display = "none";
+                            }
+
+                            for (j = 0; j < @(Model.Count()); j++)
+                            {
+                                if (id != j) {
+                                var dataDiv = document.getElementById("todoItem" + j);
+                                dataDiv.style.visibility = "hidden";
+                                dataDiv.style.display = "none";
+                                }
+
                             }
                         }
 
