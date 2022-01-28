@@ -28,7 +28,7 @@
                             <span v-if="item.infoUrl == null">{{ item.name }}</span>
                         </div>
                         <div class="col-md-2">
-                            {{getDate(item.lastUpdatedActivity)}}
+                            {{getDate(item.lastUpdatedActivity > item.lastUpdated ? item.lastUpdatedActivity : item.lastUpdated)}}
                         </div>
                         <div class="col-md-1 right">
                             <a v-bind:href="getDetailsUrl(item.no)" target="_blank" class="d-none d-md-block fa fa-edit icon-button float-right"></a>
