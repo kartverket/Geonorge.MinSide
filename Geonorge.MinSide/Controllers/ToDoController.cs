@@ -30,12 +30,12 @@ namespace Geonorge.MinSide.Web.Controllers
 
         // GET: ToDo
         [Authorize(Roles = GeonorgeRoles.MetadataAdmin + "," + GeonorgeRoles.MetadataEditor + "," + GeonorgeRoles.ContactPerson)]
-        public async Task<IActionResult> Index(bool? initial, string[] status, int? meetingId)
+        public async Task<IActionResult> Index(string[] status, int? meetingId)
         {
             var organizationNumber = HttpContext.Session.GetString("OrganizationNumber");
             List<ToDo> meetingService = null;
 
-            if (initial ?? false)
+            if (status.Length == 0)
                 status = CodeList.DefaultStatus;
 
             if (status == null || status.Length == 0)
@@ -127,7 +127,7 @@ namespace Geonorge.MinSide.Web.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index), new { meetingId = toDo.MeetingId, status = toDo.Status });
+                return RedirectToAction(nameof(Index), new { meetingId = toDo.MeetingId });
             }
             return View(toDo);
         }

@@ -1,0 +1,111 @@
+﻿<script type="text/x-template" id="tiltaksplan-template">
+    <div v-if="items && visibleItems.length">
+        <div class="list">
+            <h3 class="section-title">Geodatastrategien - tiltak i handlingsplanen</h3>
+            <div class="list-header d-none d-md-block">
+                <div class="row">
+                    <div class="col-md-1">
+                        Nr
+                    </div>
+                    <div class="col-md-8">
+                        Tiltak
+                    </div>
+                    <div class="col-md-2">
+                        Sist oppdatert
+                    </div>
+                    <div class="col-md-1">
+                    </div>
+                </div>
+            </div>
+            <div class="list-content">
+                <div v-for="item in visibleItems" class="list-item">
+                    <div class="row">
+                        <div class="col-md-1">
+                            {{item.no}}
+                        </div>
+                        <div class="col-md-8">
+                            <a v-if="item.infoUrl !== null" v-bind:href="item.infoUrl" target="_blank">{{ item.name }}</a>
+                            <span v-if="item.infoUrl == null">{{ item.name }}</span>
+                        </div>
+                        <div class="col-md-2">
+                            {{getDate(item.lastUpdatedActivity > item.lastUpdated ? item.lastUpdatedActivity : item.lastUpdated)}}
+                        </div>
+                        <div class="col-md-1 right">
+                            <a v-bind:href="getDetailsUrl(item.no)" target="_blank" class="d-none d-md-block fa fa-edit icon-button float-right"></a>
+                            <a v-bind:href="getDetailsUrl(item.no)" target="_blank" class="d-block d-md-none btn float-right">Rediger <span class="fa fa-edit"></span></a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script>
+    var Tiltaksplan = {
+        name: "Tiltaksplan",
+        template: "#tiltaksplan-template",
+        data: function () {
+            return {
+                items: null,
+                filteredItems: [],
+                visibleItems: [],
+                tooManyHits: false,
+                filterProperties: [
+                    'name',
+                ]
+            }
+        },
+        methods: {
+
+            getDetailsUrl: function (no) {
+                
+                var url = "https://tiltaksplan." + this.$root.Environment + "geonorge.no/tiltak/" + no;
+
+                return url;
+            },
+
+            getDate: function (date) {
+                if (date !== null) {
+                const dateArray = date.split("-");
+                const day = dateArray[2].substring(0, 4).split("T");
+                    return day[0] + "." + dateArray[1] + "." + dateArray[0];
+                }
+            },
+
+            getItems: function () {
+                var organizationNameParameter = '?organization=' + this.$root.OrganizationName;
+                var environmentParameter = this.$root.Environment;
+                var apiURL = "https://tiltaksplan." + environmentParameter + "geonorge.no/api/Measure" + organizationNameParameter;
+
+                return Promise.resolve(this.$root.getApiData(apiURL))
+                    .then((apiData) => {
+                        this.items = apiData;
+                    });
+            },
+
+            filterItems: function (searchText) {
+                this.filteredItems = this.items.filter(item => {
+                    return this.filterProperties.some(filterProperty => {
+                        return item[filterProperty].toUpperCase().indexOf(searchText.toUpperCase()) > -1;
+                    });
+                });
+            }
+        },
+        mounted: function () {
+            this.getItems()
+                .then(() => {
+                    this.filteredItems = this.items;
+                    this.visibleItems = this.filteredItems;
+                });
+        },
+        watch: {
+            '$root.searchText': function () {
+                var searchText = this.$root.searchText.trim();
+                this.filterItems(searchText);
+                this.visibleItems = this.filteredItems;
+            }
+        }
+    };
+</script>
