@@ -16,7 +16,7 @@ namespace Geonorge.MinSide.Utils
         private static readonly ILogger Log = Serilog.Log.ForContext(MethodBase.GetCurrentMethod().DeclaringType);
 
         public const string ClaimIdentifierRole = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
-        public const string ClaimIdentifierUsername = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+        public const string ClaimIdentifierUsername = "preferred_username";
         private const string GeonorgeRoleNamePrefix = "nd.";
 
         private readonly IBaatAuthzApi _baatAuthzApi;
@@ -34,7 +34,7 @@ namespace Geonorge.MinSide.Utils
         public async Task<List<Claim>> GetClaims(ClaimsIdentity identity)
         {
             Claim usernameClaim =
-                identity.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+                identity.FindFirst("preferred_username");
 
             BaatAuthzUserInfoResponse response = await _baatAuthzApi.Info(usernameClaim.Value);
 
