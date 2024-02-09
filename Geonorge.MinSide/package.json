@@ -4,7 +4,7 @@
   "author": "Kartverket",
   "scripts": {
     "dev": "cross-env ASPNETCORE_ENVIRONMENT=Development NODE_ENV=development dotnet run",
-    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "build": "set NODE_OPTIONS=--openssl-legacy-provider && cross-env NODE_ENV=production webpack --progress --hide-modules",
     "install": "webpack --config webpack.config.vendor.js"
   },
   "dependencies": {
