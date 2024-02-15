@@ -1,0 +1,16 @@
+{
+  "name": "@kartverket/geonorge-web-components",
+  "version": "2.20.0",
+  "description": "Geonorge Web Components",
+  "keywords": [
+    "Web Components, Custom Elements"
+  ],
+  "author": "Kartverket",
+  "license": "GPL-3.0",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/kartverket/Geonorge.WebComponents.git",
+    "directory": "packages/geonorge-web-components"
+  }
+}
