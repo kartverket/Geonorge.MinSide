@@ -289,4 +289,6 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 
-Geonorge\.MinSide/wwwroot/dist/
+# Geonorge\.MinSide/wwwroot/dist/
+
+.yarn
