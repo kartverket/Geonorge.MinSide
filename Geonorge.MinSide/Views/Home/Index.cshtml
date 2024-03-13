@@ -53,17 +53,17 @@
             <input v-on:keyup="search($event.target.value)" v-bind:placeholder="getSearchInputPlaceholder()" class="data-search-filter" />
             <img src="/dist/images/search_icon-01.svg" alt="search">
         </div>
-        <div class="section" is="tiltaksplan" v-bind:load-all-api-data="loadAllApiData"></div>
-        <div class="section" is="dokdata" v-bind:load-all-api-data="loadAllApiData"></div>
-        <div class="section" is="inspiredata" v-bind:load-all-api-data="loadAllApiData"></div>
-        <div class="section" is="metadata" v-bind:load-all-api-data="loadAllApiData"></div>
-        <div class="section" is="product-fact-sheets" v-bind:load-all-api-data="loadAllApiData"></div>
-        <div class="section" is="cartography" v-bind:load-all-api-data="loadAllApiData"></div>
-        <div class="section" is="code-lists-sosi" v-bind:load-all-api-data="loadAllApiData"></div>
-        <div class="section" is="cartography-specifications" v-bind:load-all-api-data="loadAllApiData"></div>
-        <div class="section" is="service-notifications" v-bind:load-all-api-data="loadAllApiData"></div>
-        <div class="section" is="product-specifications" v-bind:load-all-api-data="loadAllApiData"></div>
-        <div class="section" is="report-measurment" v-bind:load-all-api-data="loadAllApiData"></div>
+        <component class="section" is="tiltaksplan" v-bind:load-all-api-data="loadAllApiData"></component>
+        <component class="section" is="dokdata" v-bind:load-all-api-data="loadAllApiData"></component>
+        <component class="section" is="inspiredata" v-bind:load-all-api-data="loadAllApiData"></component>
+        <component class="section" is="metadata" v-bind:load-all-api-data="loadAllApiData"></component>
+        <component class="section" is="product-fact-sheets" v-bind:load-all-api-data="loadAllApiData"></component>
+        <component class="section" is="cartography" v-bind:load-all-api-data="loadAllApiData"></component>
+        <component class="section" is="code-lists-sosi" v-bind:load-all-api-data="loadAllApiData"></component>
+        <component class="section" is="cartography-specifications" v-bind:load-all-api-data="loadAllApiData"></component>
+        <component class="section" is="service-notifications" v-bind:load-all-api-data="loadAllApiData"></component>
+        <component class="section" is="product-specifications" v-bind:load-all-api-data="loadAllApiData"></component>
+        <component class="section" is="report-measurment" v-bind:load-all-api-data="loadAllApiData"></component>
     </div>
 </div>
 
@@ -83,8 +83,7 @@
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_Tiltaksplan.cshtml")
 
     <script>
-        var app = new Vue({
-            el: '#app',
+        var mainVueModel = Vue.createApp({
             components: {
                 OrganizationData: OrganizationData,
                 Metadata: Metadata,
@@ -100,7 +99,7 @@
                 Inspiredata: Inspiredata,
                 Tiltaksplan: Tiltaksplan
             },
-            data: function () {
+            data() {
                 return {
                     OrganizationNumber: '@ViewData["OrganizationOrgnr"]',
                     OrganizationName: '@Html.Raw(ViewData["OrganizationName"])',
@@ -142,6 +141,6 @@
                     this.searchText = value;
                 }, 1000)
             }
-        });
+        }).mount('#app');;
     </script>
 }
