@@ -72,7 +72,7 @@
         methods: {
             getItems: function () {
                 var environmentParameter = this.$root.Environment;
-                var organizationNameParameter = '?filterOrganization=' + this.$root.OrganizationName;
+                var organizationNameParameter = '?filterOrganization=' + this.$root.OrganizationNumber;
                 var orderParameter = "&orderby=updated";
                 var apiURL = "https://register." + environmentParameter + "geonorge.no/api/inspire-statusregister" + organizationNameParameter + "&limit=" + this.$root.LIMIT_MAX_VALUE + orderParameter;
 
