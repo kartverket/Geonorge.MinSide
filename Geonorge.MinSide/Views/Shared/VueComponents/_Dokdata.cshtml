@@ -74,7 +74,7 @@
                 var environmentParameter = this.$root.Environment;
                 var organizationNameParameter = '?filterOrganization=' + this.$root.OrganizationNumber;
                 var orderParameter = "&orderby=updated";
-                var apiURL = "https://register." + environmentParameter + "geonorge.no/api/det-offentlige-kartgrunnlaget" + organizationNameParameter + "&limit=" + this.$root.LIMIT_MAX_VALUE + orderParameter;
+                var apiURL = "https://register." + environmentParameter + "geonorge.no/api/dok-statusregisteret" + organizationNameParameter + "&limit=" + this.$root.LIMIT_MAX_VALUE + orderParameter;
 
                 this.loadingData = true;
 
