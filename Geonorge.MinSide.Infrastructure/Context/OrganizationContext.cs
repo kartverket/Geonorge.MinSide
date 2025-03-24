@@ -13,6 +13,7 @@ namespace Geonorge.MinSide.Infrastructure.Context
         public virtual DbSet<ToDo> Todo { get; set; }
         public DbSet<UserSettings> UserSettings { get; set; }
         public DbSet<InfoText> InfoTexts { get; set; }
+        public DbSet<Shortcut> Shortcuts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

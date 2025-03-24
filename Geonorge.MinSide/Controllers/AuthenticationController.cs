@@ -12,7 +12,7 @@ namespace Geonorge.MinSide.Controllers
         {
             // Instruct the OIDC client middleware to redirect the user agent to the identity provider.
             // Note: the authenticationType parameter must match the value configured in Startup.cs
-            var redirectUrl = Url.Action(nameof(HomeController.Index), "Home");
+            var redirectUrl = "/Shortcuts";
             return Challenge(new AuthenticationProperties { RedirectUri = redirectUrl }, OpenIdConnectDefaults.AuthenticationScheme);
         }
 

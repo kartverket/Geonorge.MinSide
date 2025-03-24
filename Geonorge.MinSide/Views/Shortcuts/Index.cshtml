@@ -1,0 +1,37 @@
+﻿@using Geonorge.MinSide.Services.Authorization;
+@using Geonorge.MinSide.Utils;
+@using Microsoft.AspNetCore.Http;
+@model IEnumerable<Geonorge.MinSide.Infrastructure.Context.Shortcut>
+@{
+    ViewData["Title"] = "Mine snarveier";
+}
+<div class="container">
+    <h2>Mine snarveier</h2>
+
+    <div class="list">
+        <div class="list-header d-none d-md-block">
+            <div class="row">
+                <div class="col-md-3">Navn</div>
+                <div class="col-md-5">Url</div>
+                <div class="col-md-2">Dato</div>
+                <div class="col-md-2"></div>
+            </div>
+        </div>
+        <div class="list-content">
+ 
+                @foreach (var shortcut in Model)
+                {
+                    <div class="list-item">
+                        <div class="row">
+                        <div class="col-md-3">@shortcut.Name</div>
+                        <div class="col-md-5"><a href="@shortcut.Url" target="_blank">@shortcut.Url</a></div>
+                        <div class="col-md-2">@shortcut.Date.ToString("dd.MM.yyyy")</div>
+                        <div class="col-md-2"></div>
+                        </div>
+                    </div>
+                }
+
+        </div>
+
+    </div>
+</div>
