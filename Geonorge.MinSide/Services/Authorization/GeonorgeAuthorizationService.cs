@@ -1,9 +1,15 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Geonorge.MinSide.Models;
 using Geonorge.MinSide.Services.Authorization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Serilog;
 
 namespace Geonorge.MinSide.Utils
@@ -21,9 +27,14 @@ namespace Geonorge.MinSide.Utils
 
         private readonly IBaatAuthzApi _baatAuthzApi;
 
-        public GeonorgeAuthorizationService(IBaatAuthzApi baatAuthzApi)
+        private readonly ApplicationSettings _config;
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public GeonorgeAuthorizationService(IBaatAuthzApi baatAuthzApi, ApplicationSettings config, IHttpClientFactory httpClientFactory)
         {
             _baatAuthzApi = baatAuthzApi;
+            _config = config;
+            _httpClientFactory = httpClientFactory;
         }
 
         /// <summary>
@@ -62,6 +73,50 @@ namespace Geonorge.MinSide.Utils
 
             return claims;
         }
+
+        public async Task<string> GetUserNameFromIntrospection(string token)
+        {
+            var authToken = token?.Replace("Bearer ", "");
+
+            string username;
+
+            var formUrlEncodedContent = new FormUrlEncodedContent(new[] {
+                new KeyValuePair<string, string>("token", authToken),
+                new KeyValuePair<string, string>("client_id", _config.auth.oidc.clientid),
+                new KeyValuePair<string, string>("client_secret", _config.auth.oidc.clientsecret)
+            }
+            );
+
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+
+                var request = new HttpRequestMessage(HttpMethod.Post, _config.auth.oidc.IntrospectionUrl);
+                request.Content = formUrlEncodedContent;
+                var response = client.SendAsync(request);
+                var result = response.Result.Content.ReadAsStringAsync().Result;
+
+                var json = JObject.Parse(result);
+                var isActiveToken = json["active"]?.Value<bool>() ?? false;
+
+                if (isActiveToken)
+                {
+                    username = json["username"]?.Value<string>();
+                    return username;
+                }
+
+                Log.Error($"Could not get user info from token.");
+                return null;
+
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception, $"Could not get user info from token.");
+                return null;
+            }
+
+        }
+
 
         private async Task AppendRoles(string username, List<Claim> claims)
         {

@@ -22,7 +22,7 @@ namespace Geonorge.MinSide.Controllers
             else if (!User.Identity.IsAuthenticated)
             {
                 HttpContext.Session.Clear();
-                return RedirectToAction("LogIn", "Authentication");
+                return View("LogIn");
             }
 
             var username = HttpContext.User.Claims.Where(c => c.Type == "preferred_username").FirstOrDefault().Value;
