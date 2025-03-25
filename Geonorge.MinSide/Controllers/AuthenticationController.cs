@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Geonorge.MinSide.Controllers
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class AuthenticationController : Controller
     {
         [HttpGet("~/login")]

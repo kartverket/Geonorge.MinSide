@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -25,6 +27,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
 namespace Geonorge.MinSide
@@ -65,6 +68,54 @@ namespace Geonorge.MinSide
             //    manager.FeatureProviders.Add(new ReferencesMetadataReferenceFeatureProvider());
             //})
             ;
+
+
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Shortcuts api", Version = "v1" });
+
+                //options.SchemaFilter<SwaggerExcludePropertySchemaFilter>();
+
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "Fyll inn \"Bearer\" [space] og en token i tekstfeltet under. Eksempel: \"Bearer b990274d-2082-34a5-9768-02b396f98d8d\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header
+                        },
+                        new List<string>()
+                    }
+                });
+
+                //Collect all referenced projects output XML document file paths  
+                var currentAssembly = Assembly.GetExecutingAssembly();
+                var xmlDocs = currentAssembly.GetReferencedAssemblies()
+                .Union(new AssemblyName[] { currentAssembly.GetName() })
+                .Select(a => Path.Combine(Path.GetDirectoryName(currentAssembly.Location), $"{a.Name}.xml"))
+                .Where(f => File.Exists(f)).ToArray();
+
+                Array.ForEach(xmlDocs, (d) =>
+                {
+                    options.IncludeXmlComments(d);
+                });
+
+            });
 
             services.AddHttpContextAccessor();
             services
@@ -194,6 +245,14 @@ namespace Geonorge.MinSide
                         });
             */
             app.UseAuthentication();
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(options =>
+            {
+                var url = $"/swagger/v1/swagger.json";
+                options.SwaggerEndpoint(url, "Shortcuts api v1");
+            });
 
 
             app.UseMvc(routes =>

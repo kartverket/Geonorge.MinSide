@@ -50,12 +50,15 @@ namespace Geonorge.MinSide.Controllers
         [HttpPost]
         public Shortcut Post(ShortcutInput shortcutInput)
         {
+            if(string.IsNullOrEmpty(shortcutInput.Url))
+                throw new System.Exception("Url is required");
+
             var auth = HttpContext.RequestServices.GetRequiredService<IGeonorgeAuthorizationService>();
             var username = auth.GetUserNameFromIntrospection(HttpContext.Request.Headers["Authorization"]).Result;
 
             var shortcut = new Shortcut
             {
-                Name = shortcutInput.Name,
+                Name = string.IsNullOrEmpty(shortcutInput.Name) ? shortcutInput.Url : shortcutInput.Name,
                 Url = shortcutInput.Url,
                 Date = System.DateTime.Now,
                 Username = username
