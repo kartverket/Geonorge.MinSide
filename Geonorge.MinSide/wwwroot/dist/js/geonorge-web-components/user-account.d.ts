@@ -29,6 +29,7 @@ export declare class UserAccount extends CustomElement {
     constructor();
     setup(options?: UserAccountOptions): void;
     connectedCallback(): void;
+    shouldShowAuthenticationButton(): boolean;
     disconnectedCallback(): void;
     hideListContainer: () => void;
     clickOutsideUserAccountItemsContainer(event: MouseEvent): void;

@@ -87,7 +87,7 @@
                 <div class="container panel panel-default" style="padding: 40px;">
                     <div id="Tabs" role="tabpanel">
                         <ul class="nav nav-tabs link-tabs" role="tablist">
-                            <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Shortcuts" ? "active" : "")"><a href="~/Shortcuts" role="tab"><i class="far fa-file-alt"></i>Mine snarveier&nbsp;</a></li>
+                            <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Shortcuts" ? "active" : "")"><a href="~/Shortcuts" role="tab"><i class="fa fa-link"></i>Mine snarveier&nbsp;</a></li>
                             <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")"><a href="~/Home" role="tab"><i class="far fa-file-alt"></i>Registreringer&nbsp;</a></li>
                             <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Documents" ? "active" : "")"><a href="~/Documents" role="tab"><i class="fas fa-file-contract"></i>Avtaler&nbsp;</a></li>
                             @if (User.IsInRole(GeonorgeRoles.MetadataAdmin) || User.IsInRole(GeonorgeRoles.MetadataEditor) || User.IsInRole(GeonorgeRoles.ContactPerson))
