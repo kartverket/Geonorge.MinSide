@@ -71,7 +71,7 @@ namespace Geonorge.MinSide.Controllers
         }
 
         [HttpDelete]
-        public void Delete(UrlInput input)
+        public IActionResult Delete(UrlInput input)
         {
             //url = HttpUtility.UrlDecode(url);
 
@@ -81,6 +81,8 @@ namespace Geonorge.MinSide.Controllers
             var shortCutFromDb = _context.Shortcuts.FirstOrDefault(s => s.Url == input.Url && s.Username == username);
             _context.Shortcuts.Remove(shortCutFromDb);
             _context.SaveChanges();
+
+            return Ok();
         }
     }
 

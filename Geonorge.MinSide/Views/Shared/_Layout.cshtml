@@ -30,6 +30,7 @@
 
 </head>
 @{
+    var access_token = "";
     dynamic userInfo = new System.Dynamic.ExpandoObject();
     userInfo.name = "";
     userInfo.email = "";
@@ -58,6 +59,10 @@
         if (claim.Type == "OrganizationName")
         {
             organization.organizationName = claim.Value;
+        }
+        if (claim.Type == "access_token")
+        {
+            access_token = claim.Value;
         }
     }
 
@@ -114,6 +119,7 @@
     <script src="~/dist/js/geonorge-shared/main.js" asp-append-version="true"></script>
 
     <script>
+        var access_token = '@access_token';
         searchOption.epiBaseUrl = '@AppSettings.Urls.GeonorgeRoot';
         searchOption.loginUrl = '@AppSettings.RedirectUri.Replace("logout", "login")';
         searchOption.logoutUrl = '@AppSettings.RedirectUri';

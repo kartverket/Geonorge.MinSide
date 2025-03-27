@@ -23,10 +23,12 @@
                 {
                     <div class="list-item">
                         <div class="row">
-                        <div class="col-md-3">@shortcut.Name</div>
-                        <div class="col-md-5"><a href="@shortcut.Url" target="_blank">@shortcut.Url</a></div>
-                        <div class="col-md-2">@shortcut.Date.ToString("dd.MM.yyyy")</div>
-                        <div class="col-md-2"></div>
+                            <div class="col-md-3">@shortcut.Name</div>
+                            <div class="col-md-5"><a href="@shortcut.Url" target="_blank">@shortcut.Url</a></div>
+                            <div class="col-md-2">@shortcut.Date.ToString("dd.MM.yyyy")</div>
+                            <div class="col-md-2">
+                            <i class="fa fa-trash" style="cursor: pointer" aria-hidden="true" onclick="removeUrl('@shortcut.Url')"></i>
+                            </div>
                         </div>
                     </div>
                 }
@@ -35,3 +37,38 @@
 
     </div>
 </div>
+<script>
+
+    function removeUrl (url)
+    {
+    console.log(url);
+        const urlApi = '/api/shortcut';
+        const token = access_token;
+        const data = { url: url };
+
+        const headers = new Headers();
+        headers.set('Authorization', 'Bearer ' + token);
+        headers.set('Content-Type', 'application/json');
+
+        fetch(urlApi, {
+            method: 'DELETE',
+            headers: headers,
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+            })
+            .then(data => {
+                console.log('Success:', data);
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Kunne ikke slette snarvei');
+            });
+
+    }
+
+</script>
