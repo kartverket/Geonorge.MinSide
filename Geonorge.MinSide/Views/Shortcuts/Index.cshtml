@@ -32,7 +32,15 @@
                         </div>
                     </div>
                 }
-
+                    <div class="list-item">
+                        <div class="row">
+                            <div class="col-md-3"><input type="text" name="name" /></div>
+                            <div class="col-md-7"><input type="text" name="url" /></div>
+                            <div class="col-md-2">
+                                <i class="fa fa-plus" style="cursor: pointer" aria-hidden="true" onclick="addUrl();"></i>
+                            </div>
+                        </div>
+                    </div>
         </div>
 
     </div>
@@ -70,5 +78,37 @@
             });
 
     }
+
+    function addUrl() 
+    { 
+       const urlApi = '/api/shortcut';
+        const token = access_token;
+        const name = document.querySelector('input[name="name"]').value;
+        const url = document.querySelector('input[name="url"]').value;
+
+        const data = { name: name, url: url };
+
+        const headers = new Headers();
+        headers.set('Authorization', 'Bearer ' + token);
+        headers.set('Content-Type', 'application/json');
+
+        fetch(urlApi, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+            })
+            .then(data => {
+                console.log('Success:', data);
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Kunne ikke legge til snarvei');
+            });}
 
 </script>
