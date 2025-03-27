@@ -11,10 +11,10 @@
     <div class="list">
         <div class="list-header">
             <div class="row">
-                <div class="col-md-3">Navn</div>
-                <div class="col-md-5">Url</div>
-                <div class="col-md-2">Dato</div>
-                <div class="col-md-2"></div>
+                <div class="col-md-3"><a href="?orderby=@ViewBag.orderbyname">Navn</a></div>
+                <div class="col-md-6">Url</div>
+                <div class="col-md-2"><a href="?orderby=@ViewBag.orderbydate">Dato</a></div>
+                <div class="col-md-1"></div>
             </div>
         </div>
         <div class="list-content">
@@ -24,9 +24,9 @@
                     <div class="list-item">
                         <div class="row">
                             <div class="col-md-3">@shortcut.Name</div>
-                            <div class="col-md-5"><a href="@shortcut.Url" target="_blank">@shortcut.Url</a></div>
+                            <div class="col-md-6"><a href="@shortcut.Url" target="_blank">@shortcut.Url</a></div>
                             <div class="col-md-2">@shortcut.Date.ToString("dd.MM.yyyy")</div>
-                            <div class="col-md-2">
+                            <div class="col-md-1">
                             <i class="fa fa-trash" style="cursor: pointer" aria-hidden="true" onclick="removeUrl('@shortcut.Url')"></i>
                             </div>
                         </div>
@@ -35,8 +35,8 @@
                     <div class="list-item">
                         <div class="row">
                             <div class="col-md-3"><input type="text" placeholder="Navn" name="name" /></div>
-                            <div class="col-md-7"><input type="text" placeholder="Url" name="url" /></div>
-                            <div class="col-md-2">
+                            <div class="col-md-8"><input type="text" placeholder="Url" name="url" /></div>
+                            <div class="col-md-1">
                                 <i class="fa fa-plus" style="cursor: pointer" aria-hidden="true" onclick="addUrl();"></i>
                             </div>
                         </div>

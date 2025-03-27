@@ -1,6 +1,7 @@
 ﻿using Geonorge.MinSide.Infrastructure.Context;
 using Geonorge.MinSide.Services.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Geonorge.MinSide.Controllers
@@ -13,7 +14,7 @@ namespace Geonorge.MinSide.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string orderby = "name_asc")
         {
             if (!User.Identity.IsAuthenticated && Request.Cookies["_loggedIn"] == "true")
             {
@@ -27,7 +28,28 @@ namespace Geonorge.MinSide.Controllers
 
             var username = HttpContext.User.Claims.Where(c => c.Type == "preferred_username").FirstOrDefault().Value;
 
-            var shortcuts = _context.Shortcuts.Where(s => s.Username == username).OrderBy(o => o.Name).ToList(); //todo order by date.
+            List<Shortcut> shortcuts = new List<Shortcut>();
+
+            if(orderby == "name_desc") { 
+                shortcuts = _context.Shortcuts.Where(s => s.Username == username).OrderByDescending(o => o.Name).ToList();
+                ViewBag.orderbyname = "name_asc";
+                ViewBag.orderbydate = "date_asc";
+            }
+            else if (orderby == "date_desc") { 
+                shortcuts = _context.Shortcuts.Where(s => s.Username == username).OrderByDescending(o => o.Date).ToList();
+                ViewBag.orderbyname = "name_asc";
+                ViewBag.orderbydate = "date_asc";
+            }
+            else if (orderby == "date_asc") { 
+                shortcuts = _context.Shortcuts.Where(s => s.Username == username).OrderBy(o => o.Date).ToList();
+                ViewBag.orderbyname = "name_asc";
+                ViewBag.orderbydate = "date_desc";
+            }
+            else { 
+                shortcuts = _context.Shortcuts.Where(s => s.Username == username).OrderBy(o => o.Name).ToList();
+                ViewBag.orderbyname = "name_desc";
+                ViewBag.orderbydate= "date_asc";
+            }
 
             return View(shortcuts);
         }
