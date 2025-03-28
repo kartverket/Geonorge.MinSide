@@ -1,4 +1,5 @@
 ﻿using Geonorge.MinSide.Infrastructure.Context;
+using Geonorge.MinSide.Models;
 using Geonorge.MinSide.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,6 @@ namespace Geonorge.MinSide.Controllers
 
     public class ApiShortcutsController : ControllerBase
     {
-        //todo get username from token
 
         private readonly OrganizationContext _context;
         public ApiShortcutsController(OrganizationContext context)
@@ -27,34 +27,44 @@ namespace Geonorge.MinSide.Controllers
         }
 
         [HttpGet]
-        public async Task<ShortcutInput> Get(UrlInput input)
+        [ProducesResponseType(typeof(ShortcutData), 200)]
+        [ProducesResponseType(typeof(UnauthorizedResult), 401)]
+        [ProducesResponseType(typeof(string), 500)]
+        [ProducesResponseType(typeof(NotFoundResult), 404)]
+
+        public async Task<IActionResult> Get(UrlInput input)
         {
             var auth = HttpContext.RequestServices.GetRequiredService<IGeonorgeAuthorizationService>();
             var username = await auth.GetUserNameFromIntrospection(HttpContext.Request.Headers["Authorization"]);
+            if (username == null)
+                return Unauthorized();
 
-            //url = HttpUtility.UrlDecode(url);
             var shortCutFromDb = await _context.Shortcuts.FirstOrDefaultAsync(s => s.Url == input.Url && s.Username == username);
 
             if (shortCutFromDb == null)
-                throw new System.Exception("Shortcut not found"); //todo return 404
+                return NotFound();
 
-            var shortcut = new ShortcutInput
+            var shortcut = new ShortcutData
             {
                 Name = shortCutFromDb.Name,
                 Url = shortCutFromDb.Url
             };
 
-            return shortcut;
+            return Ok(shortcut);
         }
-
+        [ProducesResponseType(typeof(Shortcut), 200)]
         [HttpPost]
-        public Shortcut Post(ShortcutInput shortcutInput)
+        public IActionResult Post(ShortcutData shortcutInput)
         {
             if(string.IsNullOrEmpty(shortcutInput.Url))
                 throw new System.Exception("Url is required");
 
             var auth = HttpContext.RequestServices.GetRequiredService<IGeonorgeAuthorizationService>();
             var username = auth.GetUserNameFromIntrospection(HttpContext.Request.Headers["Authorization"]).Result;
+            if (username == null)
+                return Unauthorized();
+
+            //todo check if exists?
 
             var shortcut = new Shortcut
             {
@@ -67,16 +77,20 @@ namespace Geonorge.MinSide.Controllers
             _context.Shortcuts.Add(shortcut);
             _context.SaveChanges();
 
-            return shortcut;
+            return Ok(shortcut);
         }
 
+        [ProducesResponseType(typeof(void), 200)]
+        [ProducesResponseType(typeof(UnauthorizedResult), 401)]
+        [ProducesResponseType(typeof(string), 500)]
         [HttpDelete]
         public IActionResult Delete(UrlInput input)
         {
-            //url = HttpUtility.UrlDecode(url);
 
             var auth = HttpContext.RequestServices.GetRequiredService<IGeonorgeAuthorizationService>();
             var username = auth.GetUserNameFromIntrospection(HttpContext.Request.Headers["Authorization"]).Result;
+            if (username == null)
+                return Unauthorized();
 
             var shortCutFromDb = _context.Shortcuts.FirstOrDefault(s => s.Url == input.Url && s.Username == username);
             _context.Shortcuts.Remove(shortCutFromDb);
@@ -86,7 +100,7 @@ namespace Geonorge.MinSide.Controllers
         }
     }
 
-    public class ShortcutInput
+    public class ShortcutData
     {
         public string Name { get; set; }
         public string Url { get; set; }

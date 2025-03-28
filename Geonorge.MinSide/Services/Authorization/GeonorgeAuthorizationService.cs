@@ -106,13 +106,13 @@ namespace Geonorge.MinSide.Utils
                 }
 
                 Log.Error($"Could not get user info from token.");
-                throw new Exception("Could not get user info from token.");
+                return null;
 
             }
             catch (Exception exception)
             {
                 Log.Error(exception, $"Could not get user info from token.");
-                throw new Exception("Could not get user info from token.");
+                return null;
             }
 
         }
