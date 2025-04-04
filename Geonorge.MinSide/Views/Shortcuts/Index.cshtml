@@ -24,7 +24,7 @@
                     <div class="list-item">
                         <div class="row">
                             <div class="col-md-3">@shortcut.Name</div>
-                            <div class="col-md-6"><a href="@shortcut.Url" target="_blank">@shortcut.Url</a></div>
+                        <div class="col-md-6" style="text-overflow: ellipsis; overflow:hidden; white-space:nowrap;"><a href="@shortcut.Url" target="_blank"><span>@shortcut.Url</span></a></div>
                             <div class="col-md-2">@shortcut.Date.ToString("dd.MM.yyyy")</div>
                             <div class="col-md-1">
                             <i class="fa fa-trash" style="cursor: pointer" aria-hidden="true" onclick="removeUrl('@shortcut.Url')"></i>
