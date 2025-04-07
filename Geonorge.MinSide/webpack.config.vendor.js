@@ -43,11 +43,6 @@ module.exports = (env) => {
                         safe: true
                     }
                 }),
-                new CopyWebpackPlugin({
-                    patterns: [
-                        { from: "node_modules/@kartverket/geonorge-web-components/", to: "js/geonorge-web-components" }
-                    ]
-                }),
 
                 new webpack.DllPlugin({
                     path: path.join(__dirname, "wwwroot", "dist", "[name]-manifest.json"),
