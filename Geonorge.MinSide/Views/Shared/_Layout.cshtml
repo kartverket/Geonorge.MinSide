@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="~/dist/vendor.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/style/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/style/sharedPartialsBootstrapOverride.css" asp-append-version="true" />
+    <link href="https://cdn.jsdelivr.net/npm/@("@kartverket/geonorge-web-components@3.0.0/index.css")" rel="stylesheet" type="text/css">
         <script>var environmentIsProduction = @(AppSettings.EnvironmentName == "" ? "true" : "false");</script>
     <script>
         if (environmentIsProduction) {
@@ -135,8 +136,8 @@
 
 
     @RenderSection("scripts", required: false)
-    <script src="https://cdn.jsdelivr.net/npm/@("@kartverket/geonorge-web-components@2.22.6/MainNavigation.js")"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@("@kartverket/geonorge-web-components@2.22.6/HeadingText.js")"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@("@kartverket/geonorge-web-components@2.22.6/GeonorgeFooter.js")"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@("@kartverket/geonorge-web-components@3.0.0/MainNavigation.js")"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@("@kartverket/geonorge-web-components@3.0.0/HeadingText.js")"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@("@kartverket/geonorge-web-components@3.0.0/GeonorgeFooter.js")"></script>
 </body>
 </html>
