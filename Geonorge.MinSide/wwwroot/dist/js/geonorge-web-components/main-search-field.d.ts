@@ -17,6 +17,7 @@ export declare class MainSearchField extends CustomElement {
     environment: string;
     showSearchResults: boolean;
     preventRedirect: boolean;
+    showsearchtypeselector: boolean;
     searchstring: string;
     language: string;
     searchResultsResponses: Array<SearchResultsResponseForType>;
@@ -24,6 +25,7 @@ export declare class MainSearchField extends CustomElement {
     onSearchStringChange: DispatchEmitter;
     onSearch: DispatchEmitter;
     constructor();
+    shouldShowSearchTypeSelector(showsearchtypeselector: any): boolean;
     setup(options?: MainSearchFieldOptions): void;
     connectedCallback(): void;
     disconnectedCallback(): void;
@@ -36,6 +38,7 @@ export declare class MainSearchField extends CustomElement {
     onSearchSubmitted(event: MouseEvent): void;
     searchStringChanged(): void;
     languageChanged(): void;
+    showSearchTypeSelectorChanged(): void;
     showSearchResultsChanged(): void;
     searchResultsResponseChanged(): void;
     static setup(selector: string, options: MainSearchFieldOptions): void;

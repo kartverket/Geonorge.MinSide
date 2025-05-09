@@ -24,7 +24,11 @@ namespace Geonorge.MinSide.Controllers
         }
         public IActionResult Index()
         {
-            if (!User.Identity.IsAuthenticated)
+            if (!User.Identity.IsAuthenticated && Request.Cookies["_loggedIn"] == "true")
+            {
+                return RedirectToAction("LogIn", "Authentication");
+            }
+            else if (!User.Identity.IsAuthenticated)
             {
                 HttpContext.Session.Clear();
                 return View("LogIn");
@@ -105,6 +109,13 @@ namespace Geonorge.MinSide.Controllers
 
         public IActionResult LoggedOut()
         {
+            CookieOptions options = new CookieOptions
+            {
+                Domain = "geonorge.no", // Set the domain for the cookie
+                HttpOnly = false,
+            };
+            Response.Cookies.Delete("_loggedIn");
+            Response.Cookies.Append("_loggedIn", "false", options);
             HttpContext.Session.Clear();
             return View();
         }

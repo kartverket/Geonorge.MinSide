@@ -1,4 +1,5 @@
 ﻿@using Geonorge.MinSide.Services.Authorization;
+@using System.Security.Claims
 @inject ApplicationSettings AppSettings
 
 <!DOCTYPE html>
@@ -12,6 +13,7 @@
     <link rel="stylesheet" href="~/dist/vendor.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/style/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/style/sharedPartialsBootstrapOverride.css" asp-append-version="true" />
+    <link href="https://cdn.jsdelivr.net/npm/@("@kartverket/geonorge-web-components@3.0.1/index.css")" rel="stylesheet" type="text/css">
         <script>var environmentIsProduction = @(AppSettings.EnvironmentName == "" ? "true" : "false");</script>
     <script>
         if (environmentIsProduction) {
@@ -28,9 +30,49 @@
         }</script>
 
 </head>
+@{
+    var access_token = "";
+    dynamic userInfo = new System.Dynamic.ExpandoObject();
+    userInfo.name = "";
+    userInfo.email = "";
+
+    dynamic organization = new System.Dynamic.ExpandoObject();
+    organization.organizationName = "";
+    organization.organizationNumber = "";
+
+    <!-- user claims: -->
+    var cp = (ClaimsPrincipal)User;
+    foreach (var claim in cp.Claims)
+    {
+        <!-- @claim.Type = @claim.Value -->
+        if (claim.Type == "Name")
+        {
+            userInfo.name = claim.Value;
+        }
+        if (claim.Type == "Email")
+        {
+            userInfo.email = claim.Value;
+        }
+        if (claim.Type == "OrganizationOrgnr")
+        {
+            organization.organizationNumber = claim.Value;
+        }
+        if (claim.Type == "OrganizationName")
+        {
+            organization.organizationName = claim.Value;
+        }
+        if (claim.Type == "access_token")
+        {
+            access_token = claim.Value;
+        }
+    }
+
+    string userInfoJson = Newtonsoft.Json.JsonConvert.SerializeObject(userInfo);
+    string organizationJson = Newtonsoft.Json.JsonConvert.SerializeObject(organization);
+}
 <body class="geonorge-container prototype geonorge fixed-menu-margin">
     <div id="loading-animation" class="loading-animation" style="display: none;"></div>
-    <main-navigation environment="@AppSettings.EnvironmentName.ToLower()" signinurl="@AppSettings.RedirectUri.Replace("logout", "login")"
+    <main-navigation userinfo='@userInfoJson' organization='@organizationJson' environment="@AppSettings.EnvironmentName.ToLower()" signinurl="@AppSettings.RedirectUri.Replace("logout", "login")"
                      signouturl="@AppSettings.RedirectUri"
                      isLoggedIn="@User.IsAuthenticated().ToString().ToLower()">
 
@@ -51,7 +93,8 @@
                 <div class="container panel panel-default" style="padding: 40px;">
                     <div id="Tabs" role="tabpanel">
                         <ul class="nav nav-tabs link-tabs" role="tablist">
-                            <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")"><a href="~/" role="tab"><i class="far fa-file-alt"></i>Registreringer&nbsp;</a></li>
+                            <!-- <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Shortcuts" ? "active" : "")"><a href="~/Shortcuts" role="tab"><i class="fa fa-link"></i>Mine snarveier&nbsp;</a></li> -->
+                            <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")"><a href="~/Home" role="tab"><i class="far fa-file-alt"></i>Registreringer&nbsp;</a></li>
                             <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Documents" ? "active" : "")"><a href="~/Documents" role="tab"><i class="fas fa-file-contract"></i>Avtaler&nbsp;</a></li>
                             @if (User.IsInRole(GeonorgeRoles.MetadataAdmin) || User.IsInRole(GeonorgeRoles.MetadataEditor) || User.IsInRole(GeonorgeRoles.ContactPerson))
                             {
@@ -77,6 +120,7 @@
     <script src="~/dist/js/geonorge-shared/main.js" asp-append-version="true"></script>
 
     <script>
+        var access_token = '@access_token';
         searchOption.epiBaseUrl = '@AppSettings.Urls.GeonorgeRoot';
         searchOption.loginUrl = '@AppSettings.RedirectUri.Replace("logout", "login")';
         searchOption.logoutUrl = '@AppSettings.RedirectUri';
@@ -92,7 +136,8 @@
 
 
     @RenderSection("scripts", required: false)
-    <script src="https://cdn.jsdelivr.net/npm/@("@kartverket/geonorge-web-components@2.20.6/MainNavigation.js")"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@("@kartverket/geonorge-web-components@2.20.6/GeonorgeFooter.js")"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@("@kartverket/geonorge-web-components@3.0.1/MainNavigation.js")"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@("@kartverket/geonorge-web-components@3.0.1/HeadingText.js")"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@("@kartverket/geonorge-web-components@3.0.1/GeonorgeFooter.js")"></script>
 </body>
 </html>

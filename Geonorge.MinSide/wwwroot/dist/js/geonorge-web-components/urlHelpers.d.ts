@@ -1,5 +1,6 @@
 import { SearchResultsForType } from 'interfaces/search';
 export declare const getKartkatalogUrl: (environment: string) => string;
+export declare const getMinsideUrl: (environment: string) => string;
 export declare const getGeonorgeUrl: (language: string, environment: string) => string;
 export declare const getGeonorgeNedlastingUrl: (environment: string) => string;
 export declare const convertTextToUrlSlug: (text?: string) => string;

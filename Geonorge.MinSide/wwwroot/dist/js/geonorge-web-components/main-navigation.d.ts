@@ -12,6 +12,7 @@ interface MainNavigationOptions extends CustomElementOptions {
     onEnglishLanguageSelect?: () => void;
     onDownloadItemsChange?: () => void;
     onMapItemsChange?: () => void;
+    onUserAccountClick?: () => void;
 }
 export declare class MainNavigation extends CustomElement {
     private static readonly elementSelector;
@@ -19,6 +20,7 @@ export declare class MainNavigation extends CustomElement {
     private searchTypeSelector;
     private logoElement;
     private mainMenu;
+    private userAccount;
     private mapItemsElement;
     private downloadItemsElement;
     id: string;
@@ -33,6 +35,8 @@ export declare class MainNavigation extends CustomElement {
     englishurl: string;
     norwegianurl: string;
     maincontentid: string;
+    organization: string;
+    userinfo: string;
     isloggedin: boolean;
     showmenu: boolean;
     showsearchtypeselector: boolean;
@@ -52,6 +56,8 @@ export declare class MainNavigation extends CustomElement {
     shouldShowSearchTypeSelector(showsearchtypeselector: any): boolean;
     connectedCallback(): void;
     isLoggedInChanged(): void;
+    organizationChanged(): void;
+    userinfoChanged(): void;
     languageChanged(): void;
     environmentChanged(): void;
     metadataResultsFoundChanged(): void;

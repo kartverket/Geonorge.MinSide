@@ -21,6 +21,7 @@ export * from "./stories/main-navigation/main-navigation";
 export * from "./stories/main-navigation/main-search-field/main-search-field";
 export * from "./stories/main-navigation/search-type-selector/search-type-selector";
 export * from "./stories/main-navigation/download-items/download-items";
+export * from "./stories/main-navigation/user-account/user-account";
 export * from "./stories/main-navigation/map-items/map-items";
 export * from "./stories/main-navigation/main-menu/main-menu";
 export * from "./stories/navigation-tabs/navigation-tabs";
