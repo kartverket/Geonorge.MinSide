@@ -266,7 +266,7 @@ namespace Geonorge.MinSide
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Shortcuts}/{action=Index}/{id?}");
                 routes.MapSpaFallbackRoute(
                     name: "spa-fallback",
                     defaults: new { controller = "Home", action = "Index" });
