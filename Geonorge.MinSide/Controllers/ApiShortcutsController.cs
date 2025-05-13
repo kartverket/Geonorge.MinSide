@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Policy;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Web;
@@ -32,14 +33,14 @@ namespace Geonorge.MinSide.Controllers
         [ProducesResponseType(typeof(string), 500)]
         [ProducesResponseType(typeof(NotFoundResult), 404)]
 
-        public async Task<IActionResult> Get(UrlInput input)
+        public async Task<IActionResult> Get(string url)
         {
             var auth = HttpContext.RequestServices.GetRequiredService<IGeonorgeAuthorizationService>();
             var username = await auth.GetUserNameFromIntrospection(HttpContext.Request.Headers["Authorization"]);
             if (username == null)
                 return Unauthorized();
 
-            var shortCutFromDb = await _context.Shortcuts.FirstOrDefaultAsync(s => s.Url == input.Url && s.Username == username);
+            var shortCutFromDb = await _context.Shortcuts.FirstOrDefaultAsync(s => s.Url == url && s.Username == username);
 
             if (shortCutFromDb == null)
                 return NotFound();
