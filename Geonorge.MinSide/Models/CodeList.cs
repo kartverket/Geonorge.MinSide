@@ -77,10 +77,13 @@ namespace Geonorge.MinSide.Models
 
                 JToken nameToken = code["label"];
 
-                if(uuidToken != null && nameToken != null)
+                if(nameToken != null)
                 { 
                     string uuid = uuidToken?.ToString();
                     string name = nameToken?.ToString();
+
+                        if (uuid == null)
+                            uuid = name;
 
                     if (!OrganizationsList.ContainsKey(uuid))
                         OrganizationsList.Add(uuid, name);
