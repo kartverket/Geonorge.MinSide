@@ -88,9 +88,13 @@ namespace Geonorge.MinSide.Controllers
         }
 
         private void GetOrganization()
-        {
-            var organizationNumber = HttpContext.Session.GetString("OrganizationNumber");
+        {   
             var organizationName = HttpContext.Session.GetString("OrganizationName");
+            var organizationNumber = HttpContext.Session.GetString("OrganizationNumber");
+            if (string.IsNullOrEmpty(organizationNumber))
+            {
+                organizationNumber = organizationName;
+            }
 
             if(!string.IsNullOrEmpty(organizationNumber) && !string.IsNullOrEmpty(organizationName))
             {
@@ -100,7 +104,14 @@ namespace Geonorge.MinSide.Controllers
             else
             { 
                 ViewData["OrganizationName"] = HttpContext.User.GetOrganizationName();
-                ViewData["OrganizationOrgnr"] = HttpContext.User.GetOrganizationOrgnr();
+                var orgnr = HttpContext.User.GetOrganizationOrgnr();
+                if(string.IsNullOrEmpty(orgnr))
+                {
+                    ViewData["OrganizationOrgnr"] = ViewData["OrganizationName"];
+                }
+                else { 
+                    ViewData["OrganizationOrgnr"] = orgnr;
+                }
 
                 HttpContext.Session.SetString("OrganizationNumber", ViewData["OrganizationOrgnr"].ToString());
                 HttpContext.Session.SetString("OrganizationName", ViewData["OrganizationName"].ToString());
