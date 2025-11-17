@@ -97,7 +97,7 @@
         methods: {
             getItems: function () {
                 var environmentParameter = this.$root.Environment;
-                var organizationNameParameter = '?facets%5b0%5dname=organization&facets%5b0%5dvalue=' + this.$root.OrganizationName;
+                var organizationNameParameter = '?facets%5b0%5dname=organizations&facets%5b0%5dvalue=' + this.$root.OrganizationName;
                 var orderParameter = "&orderby=updated";
                 var apiURL = "https://kartkatalog." + environmentParameter + "geonorge.no/api/search" + organizationNameParameter + "&limit=" + this.$root.LIMIT_MAX_VALUE + orderParameter;
 
