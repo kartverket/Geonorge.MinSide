@@ -1,5 +1,6 @@
 {
   "name": "Geonorge.Minside",
+  "packageManager": "yarn@1.22.22",
   "description": "Organisasjonsoversikt",
   "author": "Kartverket",
   "scripts": {
