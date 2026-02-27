@@ -53,7 +53,6 @@
             <input v-on:keyup="search($event.target.value)" v-bind:placeholder="getSearchInputPlaceholder()" class="data-search-filter" />
             <img src="/dist/images/search_icon-01.svg" alt="search">
         </div>
-        <component class="section" is="tiltaksplan" v-bind:load-all-api-data="loadAllApiData"></component>
         <component class="section" is="dokdata" v-bind:load-all-api-data="loadAllApiData"></component>
         <component class="section" is="inspiredata" v-bind:load-all-api-data="loadAllApiData"></component>
         <component class="section" is="metadata" v-bind:load-all-api-data="loadAllApiData"></component>
@@ -80,7 +79,6 @@
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_ServiceNotifications.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_Dokdata.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_Inspiredata.cshtml")
-    @await Html.PartialAsync("~/Views/Shared/VueComponents/_Tiltaksplan.cshtml")
 
     <script>
         var mainVueModel = Vue.createApp({
@@ -96,8 +94,7 @@
                 CartographySpecifications: CartographySpecifications,
                 ServiceNotifications: ServiceNotifications,
                 Dokdata: Dokdata,
-                Inspiredata: Inspiredata,
-                Tiltaksplan: Tiltaksplan
+                Inspiredata: Inspiredata
             },
             data() {
                 return {
