@@ -21,7 +21,6 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor.Compilation;
 using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
-using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -201,10 +200,6 @@ namespace Geonorge.MinSide
             {
                 app.UseDeveloperExceptionPage();
                 app.UseStatusCodePages();
-                //app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
-                //{
-                //    HotModuleReplacement = true
-                //});
             }
             else
             {
@@ -267,8 +262,12 @@ namespace Geonorge.MinSide
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Shortcuts}/{action=Index}/{id?}");
-                routes.MapSpaFallbackRoute(
+                // SPA/deep-link fallback: route unmatched requests to Home/Index.
+                // Replaces the deprecated Microsoft.AspNetCore.SpaServices MapSpaFallbackRoute,
+                // which mapped the same "{*path}" catch-all.
+                routes.MapRoute(
                     name: "spa-fallback",
+                    template: "{*url}",
                     defaults: new { controller = "Home", action = "Index" });
             });
         }
