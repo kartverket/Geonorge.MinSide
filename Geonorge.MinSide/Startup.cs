@@ -249,12 +249,24 @@ namespace Geonorge.MinSide
                 options.SwaggerEndpoint(url, "Shortcuts api v1");
             });
 
-            // global cors policy
-            app.UseCors(x => x
+            var isDevelopment = env.IsDevelopment();
+            app.UseCors(policy => policy
                 .AllowAnyMethod()
                 .AllowAnyHeader()
-                .SetIsOriginAllowed(origin => true) // allow any origin
-                .AllowCredentials()); // allow credentials
+                .SetIsOriginAllowed(origin =>
+                {
+                    if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri))
+                        return false;
+
+                    // Local development origins
+                    if (isDevelopment && uri.IsLoopback)
+                        return true;
+
+                    return uri.Scheme == Uri.UriSchemeHttps
+                        && (uri.Host.Equals("geonorge.no", StringComparison.OrdinalIgnoreCase)
+                            || uri.Host.EndsWith(".geonorge.no", StringComparison.OrdinalIgnoreCase));
+                })
+                .AllowCredentials());
 
 
             app.UseMvc(routes =>
