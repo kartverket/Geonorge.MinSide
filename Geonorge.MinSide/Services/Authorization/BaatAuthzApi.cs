@@ -47,8 +47,8 @@ namespace Geonorge.MinSide.Utils
         public async Task<BaatAuthzUserInfoResponse> Info(string username)
         {
             var url = $"{_apiUrl}authzinfo/{username}";
-            Log.Debug("Fetching data from {url}", url);
-            
+            Log.Debug("Fetching data from BaatAuthzApi authzinfo endpoint");
+
             var res = await GetClient().GetAsync(url);
 
             if (!res.IsSuccessStatusCode)
@@ -58,9 +58,9 @@ namespace Geonorge.MinSide.Utils
             }
             
             var json = await res.Content.ReadAsStringAsync();
-            
-            Log.Debug("Response from BaatAuthzApi: {json}", json);
-            
+
+            Log.Debug("BaatAuthzApi authzinfo responded {StatusCode} ({Bytes} bytes)", res.StatusCode, json?.Length ?? 0);
+
             return JsonConvert.DeserializeObject<BaatAuthzUserInfoResponse>(json);
         
         }
@@ -68,14 +68,14 @@ namespace Geonorge.MinSide.Utils
         public async Task<BaatAuthzUserRolesResponse> GetRoles(string username)
         {
             var url = $"{_apiUrl}authzlist/{username}";
-            Log.Debug("Fetching data from {url}", url);
+            Log.Debug("Fetching data from BaatAuthzApi authzlist endpoint");
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             var res = await GetClient().GetAsync(url);
             stopwatch.Stop();
 
-            Log.Information("Http call to {url} with response code {statuscode} executed in {millis}", url, res.StatusCode, stopwatch.ElapsedMilliseconds);
+            Log.Information("BaatAuthzApi authzlist call returned {statuscode} in {millis} ms", res.StatusCode, stopwatch.ElapsedMilliseconds);
 
             if (!res.IsSuccessStatusCode)
             {
@@ -85,7 +85,7 @@ namespace Geonorge.MinSide.Utils
 
             var json = await res.Content.ReadAsStringAsync();
 
-            Log.Debug("Response from BaatAuthzApi: {json}", json);
+            Log.Debug("BaatAuthzApi authzlist responded {StatusCode} ({Bytes} bytes)", res.StatusCode, json?.Length ?? 0);
 
             if (json.Contains("\"services\": false"))
                 json = json.Replace("\"services\": false", "\"services\": \"\"");
@@ -97,9 +97,7 @@ namespace Geonorge.MinSide.Utils
         private HttpClient GetClient()
         {
             var client = _httpClientFactory.CreateClient();
-            
-            Log.Debug("Connecting to BaatAuthzApi with credentials: {credentials}", _apiCredentials);
-            
+
             var byteArray = Encoding.ASCII.GetBytes(_apiCredentials);
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
             return client;
