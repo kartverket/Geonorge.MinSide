@@ -27,11 +27,11 @@ namespace Geonorge.MinSide.Services
         Task Update(Meeting updatedMeeting, int meetingId, List<IFormFile> files);
         Task Delete(int meetingId);
         Task DeleteFile(int id);
-        Task<List<ToDo>> GetAllTodo(string organizationNumber, string[] statuses, int? meetingId);
+        Task<List<ToDo>> GetAllTodo(string organizationNumber, string[] statuses, int? meetingId, bool isOrganizationAdmin);
         Task<ToDo> GetToDo(int? id);
         Task UpdateToDo(ToDo toDo, Notification notification);
         Task DeleteToDo(int id, Notification notification);
-        Task UpdateToDoList(int meetingId, List<ToDo> toDo, Notification notification);
+        Task UpdateToDoList(int meetingId, List<ToDo> toDo, Notification notification, string organizationNumber, bool isOrganizationAdmin);
     }
 
     public class MeetingService : IMeetingService
@@ -354,14 +354,20 @@ namespace Geonorge.MinSide.Services
             return maxNumberIndex + 1;
         }
 
-        public async Task<List<ToDo>> GetAllTodo(string organizationNumber, string[] statuses, int? meetingId)
+        public async Task<List<ToDo>> GetAllTodo(string organizationNumber, string[] statuses, int? meetingId, bool isOrganizationAdmin)
         {
-            if(statuses == null || statuses.Length == 0) { 
+            if(statuses == null || statuses.Length == 0) {
                 statuses = CodeList.DefaultStatus;
             }
 
             if (meetingId.HasValue)
-                return await _context.Todo.Where(m => m.MeetingId == meetingId).ToListAsync();
+            {
+                // Editors/contacts are limited to their own organization; MetadataAdmin is not.
+                var todoQuery = _context.Todo.Where(m => m.MeetingId == meetingId);
+                if (!isOrganizationAdmin)
+                    todoQuery = todoQuery.Where(m => m.OrganizationNumber == organizationNumber);
+                return await todoQuery.ToListAsync();
+            }
             else
                 return await _context.Todo.Where(m => m.OrganizationNumber == organizationNumber && statuses.Contains(m.Status)).OrderBy(o => o.Deadline).ToListAsync();
         }
@@ -392,8 +398,14 @@ namespace Geonorge.MinSide.Services
             await Task.Run(() => _logEntryService.AddLogEntry(new LogEntry { ElementId = id.ToString(), Operation = Operation.Deleted, User = notification.UserNameCurrentUser, Description = subject }));
         }
 
-        public async Task UpdateToDoList(int meetingId, List<ToDo> toDoes, Notification notification)
+        public async Task UpdateToDoList(int meetingId, List<ToDo> toDoes, Notification notification, string organizationNumber, bool isOrganizationAdmin)
         {
+            // Non-admin roles (editor/contact) can reach this, so refuse to touch a meeting - or its
+            // ToDos - belonging to another organization. MetadataAdmin is exempt (global reach).
+            var meeting = await _context.Meetings.FirstOrDefaultAsync(m => m.Id == meetingId);
+            if (meeting == null || (!isOrganizationAdmin && meeting.OrganizationNumber != organizationNumber))
+                return;
+
             foreach (var todo in toDoes)
             {
                 var updatedTodo = await GetToDo(todo.Id);
@@ -401,10 +413,11 @@ namespace Geonorge.MinSide.Services
                 if(updatedTodo == null && !string.IsNullOrEmpty(todo.Subject))
                 {
                     todo.MeetingId = meetingId;
-                    todo.Number = await GetNextNumber(todo.OrganizationNumber);
+                    todo.OrganizationNumber = meeting.OrganizationNumber;
+                    todo.Number = await GetNextNumber(meeting.OrganizationNumber);
                     _context.Todo.Add(todo);
                 }
-                else if(updatedTodo != null) {
+                else if(updatedTodo != null && (isOrganizationAdmin || updatedTodo.OrganizationNumber == organizationNumber)) {
 
                 DateTime? doneOld = updatedTodo.Done;
                 string commentOld = updatedTodo.Comment;
