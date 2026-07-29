@@ -64,7 +64,7 @@ namespace Geonorge.MinSide.Services
 
             foreach (var file in meeting.Documents)
             {
-                string fileToRemove = _applicationSettings.FilePath + "\\" + file.FileName;
+                string fileToRemove = Helper.GetDocumentFilePath(_applicationSettings.FilePath, file.FileName);
                 if (File.Exists(fileToRemove))
                     File.Delete(fileToRemove);
             }
@@ -78,7 +78,7 @@ namespace Geonorge.MinSide.Services
             var document = await _context.Documents.Where(m => m.Id == id)
                                             .SingleOrDefaultAsync();
 
-            string fileToRemove = _applicationSettings.FilePath + "\\" + document.FileName;
+            string fileToRemove = Helper.GetDocumentFilePath(_applicationSettings.FilePath, document.FileName);
             if (File.Exists(fileToRemove))
                 File.Delete(fileToRemove);
 
@@ -154,7 +154,7 @@ namespace Geonorge.MinSide.Services
 
         private async Task SaveFile(Document document, IFormFile file)
         {
-            using (var fileStream = new FileStream(_applicationSettings.FilePath + "\\" + document.FileName, FileMode.Create))
+            using (var fileStream = new FileStream(Helper.GetDocumentFilePath(_applicationSettings.FilePath, document.FileName), FileMode.Create))
             {
                 await file.CopyToAsync(fileStream);
             }

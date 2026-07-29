@@ -31,6 +31,16 @@ namespace Geonorge.MinSide.Utils
             return Path.GetExtension(FileName).ToLowerInvariant();
         }
 
+        /// <summary>
+        /// Builds the absolute path to a stored document. Defence-in-depth against path traversal:
+        /// only the file-name component of the stored value is used, stripping any directory parts
+        /// (e.g. "..\..\web.config") that could otherwise escape the documents folder.
+        /// </summary>
+        public static string GetDocumentFilePath(string basePath, string fileName)
+        {
+            return Path.Combine(basePath, Path.GetFileName(fileName ?? string.Empty));
+        }
+
         public static string[] PermittedFileExtensions = { ".pdf", ".doc", ".xls", ".docx", ".xlsx", ".pptx" };
 
         public static string GetContentType(string path)

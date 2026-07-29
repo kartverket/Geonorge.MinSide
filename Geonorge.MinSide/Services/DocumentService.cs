@@ -73,7 +73,7 @@ namespace Geonorge.MinSide.Services
             if (!Directory.Exists(_applicationSettings.FilePath))
                 Directory.CreateDirectory(_applicationSettings.FilePath);
 
-            using var fileStream = new FileStream(_applicationSettings.FilePath + "\\" + document.FileName, FileMode.Create);
+            using var fileStream = new FileStream(Helper.GetDocumentFilePath(_applicationSettings.FilePath, document.FileName), FileMode.Create);
             
             await file.CopyToAsync(fileStream);
         }
@@ -81,6 +81,9 @@ namespace Geonorge.MinSide.Services
         public async Task Update(Document updatedDocument, int documentId)
         {
             var currentDocument = await Get(documentId);
+            // FileName is server-generated on create and must never change via edit (it maps to the
+            // physical file on disk). Preserve the stored value so it cannot be tampered/over-posted.
+            updatedDocument.FileName = currentDocument.FileName;
             _context.Entry(currentDocument).CurrentValues.SetValues(updatedDocument);
             await SaveChanges();
         }
@@ -94,7 +97,7 @@ namespace Geonorge.MinSide.Services
         {
             _context.Documents.Remove(document);
             await SaveChanges();
-            string file = _applicationSettings.FilePath + "\\" + document.FileName;
+            string file = Helper.GetDocumentFilePath(_applicationSettings.FilePath, document.FileName);
             if (File.Exists(file))
                 File.Delete(file);
         }
