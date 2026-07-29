@@ -191,7 +191,7 @@ namespace Geonorge.MinSide.Services
                         message.Subject = "Nytt oppfølgingspunkt Geonorge min side: "+ todo.Number + " " + todo.Subject;
 
                         BodyBuilder bodyBuilder = new BodyBuilder();
-                        bodyBuilder.HtmlBody = todo.Description + "<br>Frist: " + todo.Deadline.ToShortDateString(); 
+                        bodyBuilder.HtmlBody = HtmlSanitizerHelper.SanitizeHtml(todo.Description + "<br>Frist: " + todo.Deadline.ToShortDateString()); 
                         bodyBuilder.TextBody = todo.Description + Environment.NewLine + "Frist: " + todo.Deadline.ToShortDateString();
 
                         message.Body = bodyBuilder.ToMessageBody();
@@ -232,7 +232,7 @@ namespace Geonorge.MinSide.Services
                         message.Subject = subject;
 
                         BodyBuilder bodyBuilder = new BodyBuilder();
-                        bodyBuilder.HtmlBody = body;
+                        bodyBuilder.HtmlBody = HtmlSanitizerHelper.SanitizeHtml(body);
                         bodyBuilder.TextBody = body;
 
                         message.Body = bodyBuilder.ToMessageBody();
@@ -307,7 +307,7 @@ namespace Geonorge.MinSide.Services
                         message.Subject = "Endret oppfølgingspunkt Geonorge min side: " + todo.Number + " " + todo.Subject;
 
                         BodyBuilder bodyBuilder = new BodyBuilder();
-                        bodyBuilder.HtmlBody = changes.ToString();
+                        bodyBuilder.HtmlBody = HtmlSanitizerHelper.SanitizeHtml(changes.ToString());
 
                         message.Body = bodyBuilder.ToMessageBody();
 
@@ -459,7 +459,7 @@ namespace Geonorge.MinSide.Services
 
 
                         BodyBuilder bodyBuilder = new BodyBuilder();
-                        bodyBuilder.HtmlBody = changes.ToString();
+                        bodyBuilder.HtmlBody = HtmlSanitizerHelper.SanitizeHtml(changes.ToString());
 
                         message.Body = bodyBuilder.ToMessageBody();
 

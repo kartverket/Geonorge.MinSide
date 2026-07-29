@@ -13,6 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="HtmlSanitizer" Version="9.1.973" />
     <PackageReference Include="Kartverket.Geonorge.Utilities" Version="2.0.0" />
     <PackageReference Include="MailKit" Version="4.17.0" />
     <PackageReference Include="Markdig" Version="0.30.3" />
