@@ -41,7 +41,8 @@
                 @foreach (var item in Model.Drafts)
                 {
                     <div class="col-6">
-                        <a asp-action="Download" asp-controller="Documents" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
+                        <a asp-action="Download" asp-controller="Documents" asp-route-id="@item.Id"
+                           onclick="trackEvent('document_downloaded', { document_group: 'draft', document_type: '@item.Type' })">@Html.DisplayFor(modelItem => item.Name)</a>
                     </div>
                     <div class="col-2">
                         @item.Date.ToString("dd.MM.yyyy")
@@ -66,7 +67,8 @@
                 @foreach (var item in Model.Valid)
                 {
                     <div class="col-6">
-                        <a asp-action="Download" asp-controller="Documents" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
+                        <a asp-action="Download" asp-controller="Documents" asp-route-id="@item.Id"
+                           onclick="trackEvent('document_downloaded', { document_group: 'valid', document_type: '@item.Type' })">@Html.DisplayFor(modelItem => item.Name)</a>
                     </div>
                     <div class="col-2">
                         @item.Date.ToString("dd.MM.yyyy")
@@ -92,7 +94,8 @@
                 @foreach (var item in Model.Superseded)
                 {
                     <div class="col-6">
-                        <a asp-action="Download" asp-controller="Documents" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
+                        <a asp-action="Download" asp-controller="Documents" asp-route-id="@item.Id"
+                           onclick="trackEvent('document_downloaded', { document_group: 'superseded', document_type: '@item.Type' })">@Html.DisplayFor(modelItem => item.Name)</a>
                     </div>
                     <div class="col-2">
                         @item.Date.ToString("dd.MM.yyyy")

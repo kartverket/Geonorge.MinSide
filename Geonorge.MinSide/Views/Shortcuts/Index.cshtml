@@ -4,6 +4,12 @@
 @model IEnumerable<Geonorge.MinSide.Infrastructure.Context.Shortcut>
 @{
     ViewData["Title"] = "Mine snarveier";
+
+    /* Bare kjente sorteringsverdier sendes videre, siden verdien kommer fra query-strengen. */
+    var requestedOrderby = Context.Request.Query["orderby"].ToString();
+    var trackedOrderby = Array.IndexOf(new[] { "name_asc", "name_desc", "date_asc", "date_desc" }, requestedOrderby) >= 0
+        ? requestedOrderby
+        : null;
 }
 <div class="container">
     <heading-text><h1 underline=“true”>Mine snarveier</h1></heading-text>
@@ -70,6 +76,8 @@
             })
             .then(data => {
                 console.log('Success:', data);
+                /* Url og navn er brukerens egen tekst og sendes ikke. */
+                trackEvent('shortcut_deleted');
                 window.location.reload();
             })
             .catch(error => {
@@ -104,6 +112,7 @@
             })
             .then(data => {
                 console.log('Success:', data);
+                trackEvent('shortcut_added');
                 window.location.reload();
             })
             .catch(error => {
@@ -111,4 +120,13 @@
                 alert('Kunne ikke legge til snarvei');
             });}
 
+@if (trackedOrderby != null)
+{
+    /* site.js lastes etter denne siden, så trackEvent finnes først når DOM er ferdig. */
+    <text>
+    document.addEventListener('DOMContentLoaded', function () {
+        trackEvent('shortcuts_sorted', { orderby: '@trackedOrderby' });
+    });
+    </text>
+}
 </script>

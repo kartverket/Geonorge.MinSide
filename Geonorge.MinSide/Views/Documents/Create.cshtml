@@ -68,5 +68,18 @@
         const display = event.target.value === subDistributionAgreementDocumentType ? 'block' : 'none';
         documentNameFormGroupElement.style.display = display;
     });
+
+    documentTypeSelectElement.form.addEventListener('submit', () => {
+        const fileInput = document.querySelector('input[name="file"]');
+        const fileName = fileInput && fileInput.files.length ? fileInput.files[0].name : '';
+        const lastDot = fileName.lastIndexOf('.');
+
+        /* Bare filendelsen sendes, aldri filnavnet, som kan inneholde navn på personer. */
+        trackEvent('document_uploaded', {
+            document_type: documentTypeSelectElement.value,
+            document_status: document.querySelector('select[name="Status"]').value,
+            file_extension: lastDot > -1 ? fileName.slice(lastDot + 1).toLowerCase() : null
+        });
+    });
 </script>
 
