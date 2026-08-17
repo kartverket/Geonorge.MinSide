@@ -21,7 +21,6 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor.Compilation;
 using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
-using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -201,10 +200,6 @@ namespace Geonorge.MinSide
             {
                 app.UseDeveloperExceptionPage();
                 app.UseStatusCodePages();
-                //app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
-                //{
-                //    HotModuleReplacement = true
-                //});
             }
             else
             {
@@ -254,12 +249,24 @@ namespace Geonorge.MinSide
                 options.SwaggerEndpoint(url, "Shortcuts api v1");
             });
 
-            // global cors policy
-            app.UseCors(x => x
+            var isDevelopment = env.IsDevelopment();
+            app.UseCors(policy => policy
                 .AllowAnyMethod()
                 .AllowAnyHeader()
-                .SetIsOriginAllowed(origin => true) // allow any origin
-                .AllowCredentials()); // allow credentials
+                .SetIsOriginAllowed(origin =>
+                {
+                    if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri))
+                        return false;
+
+                    // Local development origins
+                    if (isDevelopment && uri.IsLoopback)
+                        return true;
+
+                    return uri.Scheme == Uri.UriSchemeHttps
+                        && (uri.Host.Equals("geonorge.no", StringComparison.OrdinalIgnoreCase)
+                            || uri.Host.EndsWith(".geonorge.no", StringComparison.OrdinalIgnoreCase));
+                })
+                .AllowCredentials());
 
 
             app.UseMvc(routes =>
@@ -267,8 +274,12 @@ namespace Geonorge.MinSide
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Shortcuts}/{action=Index}/{id?}");
-                routes.MapSpaFallbackRoute(
+                // SPA/deep-link fallback: route unmatched requests to Home/Index.
+                // Replaces the deprecated Microsoft.AspNetCore.SpaServices MapSpaFallbackRoute,
+                // which mapped the same "{*path}" catch-all.
+                routes.MapRoute(
                     name: "spa-fallback",
+                    template: "{*url}",
                     defaults: new { controller = "Home", action = "Index" });
             });
         }

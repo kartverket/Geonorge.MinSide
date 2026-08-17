@@ -43,7 +43,7 @@ namespace Geonorge.MinSide.Web.Controllers
 
             if (document.OrganizationNumber == HttpContext.Session.GetString("OrganizationNumber"))
             {
-                string path = _applicationSettings.FilePath + "\\" + document.FileName;
+                string path = Helper.GetDocumentFilePath(_applicationSettings.FilePath, document.FileName);
                 var memory = new MemoryStream();
                 using (var stream = new FileStream(path, FileMode.Open))
                 {
@@ -125,7 +125,7 @@ namespace Geonorge.MinSide.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,OrganizationNumber,Type,Name,FileName,Date,Status")] Document document)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,OrganizationNumber,Type,Name,Date,Status")] Document document)
         {
             if (id != document.Id)
             {

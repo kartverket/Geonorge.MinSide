@@ -41,7 +41,7 @@ namespace Geonorge.MinSide.Web.Controllers
             if (status == null || status.Length == 0)
                 meetingService = new List<ToDo>();
             else
-                meetingService = await _meetingService.GetAllTodo(organizationNumber, status, meetingId);
+                meetingService = await _meetingService.GetAllTodo(organizationNumber, status, meetingId, User.IsInRole(GeonorgeRoles.MetadataAdmin));
 
             ViewBag.Status = status;
 
@@ -172,7 +172,8 @@ namespace Geonorge.MinSide.Web.Controllers
         {
             Notification notification = GetNotificationInfo(sendNotification);
 
-            await _meetingService.UpdateToDoList(MeetingId, ToDo, notification);
+            var organizationNumber = HttpContext.Session.GetString("OrganizationNumber");
+            await _meetingService.UpdateToDoList(MeetingId, ToDo, notification, organizationNumber, User.IsInRole(GeonorgeRoles.MetadataAdmin));
 
             return RedirectToAction(nameof(Index), new {initial = true });
         }

@@ -81,7 +81,7 @@
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_Inspiredata.cshtml")
 
     <script>
-        var mainVueModel = Vue.createApp({
+        var mainVueApp = Vue.createApp({
             components: {
                 OrganizationData: OrganizationData,
                 Metadata: Metadata,
@@ -136,8 +136,28 @@
 
                 search: debounce(function (value) {
                     this.searchText = value;
+
+                    /* Søketeksten sendes ikke, bare lengden, siden brukeren kan søke på navn. */
+                    if (value) {
+                        trackEvent('registrations_searched', { query_length: value.length });
+                    }
                 }, 1000)
             }
-        }).mount('#app');;
+        });
+
+        /* Felles metoder for alle seksjonene på siden. trackEvent ligger i wwwroot/js/site.js. */
+        mainVueApp.mixin({
+            methods: {
+                trackItemEditClicked: function (section) {
+                    trackEvent('registration_item_edit_clicked', { section: section });
+                },
+
+                trackItemDownloadClicked: function (section) {
+                    trackEvent('registration_item_downloaded', { section: section });
+                }
+            }
+        });
+
+        var mainVueModel = mainVueApp.mount('#app');
     </script>
 }

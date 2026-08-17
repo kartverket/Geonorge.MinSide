@@ -29,6 +29,23 @@
             })(window, document, 'script', 'dataLayer', 'GTM-MR2X5P');
         }</script>
 
+    @if (AppSettings.PostHog.IsEnabledFor(AppSettings.EnvironmentName))
+    {
+        <script>
+            /* Innstillingene settes i appsettings, under "PostHog". */
+            function initPostHog() {
+                posthog.init('@AppSettings.PostHog.ApiKey', @Html.Raw(AppSettings.PostHog.ClientConfigJson));
+                /* Rekkefølgen er viktig: app-egenskapen må være registrert før første $pageview sendes. */
+                posthog.register({ app: 'minside' });
+@if (AppSettings.PostHog.CapturePageview)
+{
+                <text>posthog.capture('$pageview');</text>
+}
+            }
+        </script>
+        <script async src="@AppSettings.PostHog.ScriptUrl" onload="initPostHog()"></script>
+    }
+
 </head>
 @{
     var access_token = "";

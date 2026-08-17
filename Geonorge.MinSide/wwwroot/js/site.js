@@ -3,6 +3,15 @@
 
 // Write your JavaScript code.
 
+// Sender en hendelse til PostHog hvis PostHog er lastet. PostHog lastes bare i produksjon,
+// og bare når det er satt en ApiKey i appsettings, så window.posthog finnes ikke i dev og test.
+// Ingen personopplysninger skal sendes med, bare koder og antall.
+function trackEvent(eventName, properties) {
+	if (window.posthog && typeof window.posthog.capture === 'function') {
+		window.posthog.capture(eventName, properties);
+	}
+};
+
 function debounce(func, wait, immediate) {
 	var timeout;
 

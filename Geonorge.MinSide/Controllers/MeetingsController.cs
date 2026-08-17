@@ -45,6 +45,12 @@ namespace Geonorge.MinSide.Web.Controllers
 
             ViewBag.status = status;
             var meeting = await _meetingService.Get(id.Value, status);
+
+            // Scope to the caller's organization: non-admin roles (editor/contact) can reach this
+            // action, so a meeting belonging to another organization must not be viewable by id.
+            var organizationNumber = HttpContext.Session.GetString("OrganizationNumber");
+            if (!User.IsInRole(GeonorgeRoles.MetadataAdmin) && meeting != null && meeting.OrganizationNumber != organizationNumber)
+                meeting = null;
                
             if (meeting == null)
             {
@@ -192,7 +198,8 @@ namespace Geonorge.MinSide.Web.Controllers
             Notification notification = new Notification
             { Send = true, EmailCurrentUser = HttpContext.User.GetUserEmail(), UserNameCurrentUser = HttpContext.User.GetUsername() };
 
-            await _meetingService.UpdateToDoList(MeetingId, ToDo, notification);
+            var organizationNumber = HttpContext.Session.GetString("OrganizationNumber");
+            await _meetingService.UpdateToDoList(MeetingId, ToDo, notification, organizationNumber, User.IsInRole(GeonorgeRoles.MetadataAdmin));
 
              return RedirectToAction(nameof(Index), new { meetingId = MeetingId });
         }

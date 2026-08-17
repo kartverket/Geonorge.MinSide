@@ -40,7 +40,10 @@
                 <tr>
                     <td>@log.DateTime</td>
                     <td>@log.User</td>
-                    <td>@Html.Raw(log.Description)</td>
+                    @* Log descriptions are built from user-supplied ToDo fields (incl. Markdig output),
+                       so they are sanitised with an allow-list before rendering: safe formatting tags
+                       are kept, while <script>, event handlers and javascript: URLs are stripped. *@
+                    <td>@Html.Raw(Geonorge.MinSide.Utils.HtmlSanitizerHelper.SanitizeHtml(log.Description))</td>
                 </tr>
             }
         </table>
